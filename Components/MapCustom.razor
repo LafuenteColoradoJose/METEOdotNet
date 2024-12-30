@@ -1,17 +1,23 @@
-﻿@* @using METEOdotNet.Services *@
-@* @inject GeolocationService GeolocationService *@
-@inject IJSRuntime JSRuntime
+﻿@inject IJSRuntime JSRuntime
 
 @code {
     public double latitude;
     public double longitude;
+    public double viewportHeight;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            await GetViewportSizeAsync();
             await GetGeolocationAsync();
         }
+    }
+
+    private async Task GetViewportSizeAsync()
+    {
+        var viewportSize = await JSRuntime.InvokeAsync<ViewportSize>("getViewportSize");
+        viewportHeight = viewportSize.Height / 2;
     }
 
     private async Task GetGeolocationAsync()
@@ -19,7 +25,7 @@
         var result = await JSRuntime.InvokeAsync<GeolocationResult>("getGeolocation");
         latitude = result.Latitude;
         longitude = result.Longitude;
-        await JSRuntime.InvokeVoidAsync("initializeMap", latitude, longitude);
+        await JSRuntime.InvokeVoidAsync("initializeMap", latitude, longitude, viewportHeight);
     }
 
     public class GeolocationResult
@@ -27,16 +33,21 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
+
+    public class ViewportSize
+    {
+        public double Height { get; set; }
+    }
 }
 
+@* <div id="map" style="height:@($"{viewportHeight}px");"></div> *@
+<div id="map" style="height:400px;"></div>
 
-<h3>Geolocation</h3>
-<div id="map" class="" style="width:300px; height:300px"></div>
 
 
 <script>
-    window.initializeMap = (lat, lon) => {
-        console.log("desde inizilizeMAP", lat, lon)
+    window.initializeMap = (lat, lon, height) => {
+        console.log("desde initializeMap", lat, lon, height);
         var map = L.map('map', { zoomControl: false }).setView([lat, lon], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -46,25 +57,29 @@
         var marker = L.marker([lat, lon]).addTo(map);
     };
 
-        window.getGeolocation = () => {
+    window.getGeolocation = () => {
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var lat = position.coords.latitude;
                     var lon = position.coords.longitude;
-                    console.log('latitud =', lat, 'longitud =', lon); // Mensaje de depuración
+                    console.log('latitud =', lat, 'longitud =', lon);
                     resolve({ Latitude: lat, Longitude: lon });
                 }, function (error) {
-                    console.error('Error obteniendo la geolocalización:', error); // Mensaje de error
+                    console.error('Error obteniendo la geolocalización:', error);
                     reject(error);
                 });
             } else {
-                console.error('Geolocalización no soportada por este navegador.'); // Mensaje de error
+                console.error('Geolocalización no soportada por este navegador.');
                 reject("Geolocation is not supported by this browser.");
             }
         });
     };
 
+    window.getViewportSize = () => {
+        return {
+            Width: window.innerWidth,
+            Height: window.innerHeight
+        };
+    };
 </script>
-
-
