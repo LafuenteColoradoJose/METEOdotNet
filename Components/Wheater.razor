@@ -67,8 +67,6 @@
 }
 private async Task<string> GetWeatherIconAsync()
 {
-    // // Añade un retraso de 500 ms
-    // await Task.Delay(1000);
         weatherIconUrl = await GetWeatherIconAsync();
 
     if (weatherData == null || weatherData.current == null)
@@ -80,7 +78,7 @@ private async Task<string> GetWeatherIconAsync()
     var cloudCover = weatherData.current.cloud_cover;
     var precipitation = weatherData.current.precipitation;
     var windSpeed = weatherData.current.wind_speed_10m;
-    var isDay = weatherData.current.is_day;
+    var isDay = weatherData.current.is_day == 1;
 
     if (isDay && cloudCover < 10 && precipitation < 1)
     {
@@ -113,7 +111,7 @@ private async Task<string> GetWeatherIconAsync()
         public double cloud_cover { get; set; }
         public double wind_speed_10m { get; set; }
         public double wind_direction_10m { get; set; }
-        public bool is_day { get; set; }
+        public int is_day { get; set; }
     }
 }
 
@@ -134,15 +132,15 @@ private async Task<string> GetWeatherIconAsync()
     {
         <article class="d-flex flex-column align-items-center justify-content-center rounded">
             <div class="d-flex flex-column justify-content-center bg-light rounded ">
-                <div class="font-weight-bold text-lg-center ">Current Location</div>
-                <div class="text-muted small text-sm-center">@time.ToString("dddd dd MMMM yyyy")</div>
+                <div class="fs-3 text-center ">Current Location</div>
+                <div class="text-muted small text-center">@time.ToString("dddd dd MMMM yyyy")</div>
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <img src="@weatherIconUrl" alt="Weather Icon" style="height: 8rem; width: 8rem;" />
                 </div>
                 <div class="d-flex align-items-center justify-content-center mt-6">
                     <div class="font-weight-medium display-1">@((weatherData.current.temperature_2m).ToString("0"))°</div>
                 </div>
-                <div class="d-flex justify-content-between mt-6">
+                <div class="d-flex justify-content-between mt-6 gap-2">
                     <div class="d-flex flex-column align-items-center">
                         <div class="font-weight-medium small">Wind</div>
                         <div class="text-muted small">@((weatherData.current.wind_speed_10m).ToString("0")) m/s</div>
