@@ -115,7 +115,7 @@ private async Task<string> GetWeatherIconAsync()
     }
 }
 
-<section id="cardWeater" class="mt-1 d-flex flex-column justify-content-center">
+<section id="cardWeater" class="mt-1 d-flex flex-wrap justify-content-center align-items-center gap-4">
     @* <h3>Weather Dashboard</h3> *@
 @* 
     <p>latitude</p>
@@ -130,37 +130,74 @@ private async Task<string> GetWeatherIconAsync()
     }
     else
     {
-        <article class="d-flex flex-column align-items-center justify-content-center rounded">
-            <div class="d-flex flex-column justify-content-center bg-light rounded ">
-                <div class="fs-3 text-center ">Current Location</div>
-                <div class="text-muted small text-center">@time.ToString("dddd dd MMMM yyyy")</div>
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <img src="@weatherIconUrl" alt="Weather Icon" style="height: 8rem; width: 8rem;" />
+
+        <article class="fs-3 text-center ">Current Location</article>
+        <div class="small text-center">@time.ToString("dddd dd MMMM yyyy")</div>
+
+        <article id="bloqCard" class="d-flex flex-wrap justify-content-center align-items-center rounded ">
+             
+            <div id="dateCard" class="d-flex flex-wrap justify-content-center align-items-center">
+                <img src="@weatherIconUrl" alt="Weather Icon" />
+                <div class="font-weight-medium display-1">@((weatherData.current.temperature_2m).ToString("0"))°</div>
+            </div>
+            
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-6 gap-1 mx-2">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="font-weight-medium">Wind</div>
+                    <div class="small">@((weatherData.current.wind_speed_10m).ToString("0")) m/s</div>
                 </div>
-                <div class="d-flex align-items-center justify-content-center mt-6">
-                    <div class="font-weight-medium display-1">@((weatherData.current.temperature_2m).ToString("0"))°</div>
+                <div class="d-flex flex-column align-items-center">
+                    <div class="font-weight-medium small">Direction</div>
+                    <div class="small">@((weatherData.current.wind_direction_10m).ToString("0"))°</div>
                 </div>
-                <div class="d-flex justify-content-between mt-6 gap-2">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="font-weight-medium small">Wind</div>
-                        <div class="text-muted small">@((weatherData.current.wind_speed_10m).ToString("0")) m/s</div>
-                    </div>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="font-weight-medium small">Direction</div>
-                        <div class="text-muted small">@((weatherData.current.wind_direction_10m).ToString("0"))°</div>
-                    </div>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="font-weight-medium small">Precipitation</div>
-                        <div class="text-muted small">@((weatherData.current.precipitation).ToString("0")) mm</div>
-                    </div>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="font-weight-medium small">Cloud Cover</div>
-                        <div class="text-muted small">@((weatherData.current.cloud_cover).ToString("0")) %</div>
-                    </div>
+                <div class="d-flex flex-column align-items-center">
+                    <div class="font-weight-medium small">Precipitation</div>
+                    <div class="small">@((weatherData.current.precipitation).ToString("0")) mm</div>
+                </div>
+                <div class="d-flex flex-column align-items-center">
+                    <div class="font-weight-medium small">Cloud Cover</div>
+                    <div class="small">@((weatherData.current.cloud_cover).ToString("0")) %</div>
                 </div>
             </div>
+
         </article>
+        
 
        
     }
 </section>
+
+<style>
+    img {
+        height: 6rem; 
+        width: 6rem;
+    }
+
+    @@media (width > 576px) {
+        img {
+            height: 8rem;
+            width: 8rem;
+        }
+    }
+
+    #cardWeater {
+        background: rgb(182,204,216);
+        background: linear-gradient(70deg, rgba(182,204,216,1) 83%, rgba(59,60,61,1) 100%);
+        border-radius: 4px;
+        
+    }
+   
+    @@media (width > 576px) {
+        #cardWeater {
+            /* width: fit-content; */
+            height: auto;
+            gap:6px;
+
+        }
+    }
+
+   
+    
+</style>
+                        
